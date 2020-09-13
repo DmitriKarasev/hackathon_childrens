@@ -4,12 +4,12 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ChildStudy.Migrations
 {
-    public partial class Initial : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "User",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -24,7 +24,7 @@ namespace ChildStudy.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_User", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -61,9 +61,9 @@ namespace ChildStudy.Migrations
                 {
                     table.PrimaryKey("PK_Teachers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Teachers_Users_UserId",
+                        name: "FK_Teachers_User_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
+                        principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -151,6 +151,36 @@ namespace ChildStudy.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Students",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    InsertedOn = table.Column<DateTime>(nullable: false),
+                    InsertedBy = table.Column<int>(nullable: false),
+                    UpdatedOn = table.Column<DateTime>(nullable: false),
+                    UpdatedBy = table.Column<int>(nullable: false),
+                    UserId = table.Column<int>(nullable: true),
+                    TimetableId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Students", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Students_Timetable_TimetableId",
+                        column: x => x.TimetableId,
+                        principalTable: "Timetable",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Students_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Raitings",
                 columns: table => new
                 {
@@ -162,59 +192,22 @@ namespace ChildStudy.Migrations
                     UpdatedBy = table.Column<int>(nullable: false),
                     TimetableId = table.Column<int>(nullable: true),
                     TeacherGrade = table.Column<int>(nullable: false),
-                    StudentGrade = table.Column<int>(nullable: false)
+                    StudentGrade = table.Column<int>(nullable: false),
+                    StudentId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Raitings", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Raitings_Students_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Students",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_Raitings_Timetable_TimetableId",
                         column: x => x.TimetableId,
                         principalTable: "Timetable",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Students",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    InsertedOn = table.Column<DateTime>(nullable: false),
-                    InsertedBy = table.Column<int>(nullable: false),
-                    UpdatedOn = table.Column<DateTime>(nullable: false),
-                    UpdatedBy = table.Column<int>(nullable: false),
-                    UserId = table.Column<int>(nullable: true),
-                    wayId = table.Column<int>(nullable: true),
-                    RaitingId = table.Column<int>(nullable: true),
-                    TimetableId = table.Column<int>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Students", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Students_Raitings_RaitingId",
-                        column: x => x.RaitingId,
-                        principalTable: "Raitings",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Students_Timetable_TimetableId",
-                        column: x => x.TimetableId,
-                        principalTable: "Timetable",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Students_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Students_Ways_wayId",
-                        column: x => x.wayId,
-                        principalTable: "Ways",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -235,14 +228,14 @@ namespace ChildStudy.Migrations
                 column: "TeacherId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Raitings_StudentId",
+                table: "Raitings",
+                column: "StudentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Raitings_TimetableId",
                 table: "Raitings",
                 column: "TimetableId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Students_RaitingId",
-                table: "Students",
-                column: "RaitingId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Students_TimetableId",
@@ -253,11 +246,6 @@ namespace ChildStudy.Migrations
                 name: "IX_Students_UserId",
                 table: "Students",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Students_wayId",
-                table: "Students",
-                column: "wayId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Teachers_UserId",
@@ -273,10 +261,10 @@ namespace ChildStudy.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Students");
+                name: "Raitings");
 
             migrationBuilder.DropTable(
-                name: "Raitings");
+                name: "Students");
 
             migrationBuilder.DropTable(
                 name: "Timetable");
@@ -294,7 +282,7 @@ namespace ChildStudy.Migrations
                 name: "Ways");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "User");
         }
     }
 }

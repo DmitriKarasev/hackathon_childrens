@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ChildStudy.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20200912205849_Initial")]
-    partial class Initial
+    [Migration("20200912220204_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -120,6 +120,9 @@ namespace ChildStudy.Migrations
                     b.Property<int>("StudentGrade")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("StudentId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("TeacherGrade")
                         .HasColumnType("integer");
 
@@ -134,6 +137,8 @@ namespace ChildStudy.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
 
                     b.HasIndex("TimetableId");
 
@@ -154,9 +159,6 @@ namespace ChildStudy.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<int?>("RaitingId")
-                        .HasColumnType("integer");
-
                     b.Property<int?>("TimetableId")
                         .HasColumnType("integer");
 
@@ -170,18 +172,11 @@ namespace ChildStudy.Migrations
                     b.Property<int?>("UserId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("wayId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("RaitingId");
 
                     b.HasIndex("TimetableId");
 
                     b.HasIndex("UserId");
-
-                    b.HasIndex("wayId");
 
                     b.ToTable("Students");
                 });
@@ -288,7 +283,7 @@ namespace ChildStudy.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("ChildStudy.Models.Way", b =>
@@ -340,6 +335,10 @@ namespace ChildStudy.Migrations
 
             modelBuilder.Entity("ChildStudy.Models.Raiting", b =>
                 {
+                    b.HasOne("ChildStudy.Models.Student", null)
+                        .WithMany("Raitings")
+                        .HasForeignKey("StudentId");
+
                     b.HasOne("ChildStudy.Models.Timetable", "Timetable")
                         .WithMany()
                         .HasForeignKey("TimetableId");
@@ -347,10 +346,6 @@ namespace ChildStudy.Migrations
 
             modelBuilder.Entity("ChildStudy.Models.Student", b =>
                 {
-                    b.HasOne("ChildStudy.Models.Raiting", "Raiting")
-                        .WithMany()
-                        .HasForeignKey("RaitingId");
-
                     b.HasOne("ChildStudy.Models.Timetable", null)
                         .WithMany("Registered")
                         .HasForeignKey("TimetableId");
@@ -358,10 +353,6 @@ namespace ChildStudy.Migrations
                     b.HasOne("ChildStudy.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
-
-                    b.HasOne("ChildStudy.Models.Way", "way")
-                        .WithMany()
-                        .HasForeignKey("wayId");
                 });
 
             modelBuilder.Entity("ChildStudy.Models.Teacher", b =>

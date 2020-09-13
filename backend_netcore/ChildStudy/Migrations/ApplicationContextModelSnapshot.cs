@@ -281,7 +281,7 @@ namespace ChildStudy.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("ChildStudy.Models.Way", b =>
