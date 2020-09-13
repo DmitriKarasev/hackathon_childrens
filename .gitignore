@@ -1,4 +1,5 @@
-/backend_netcore/ChildStudy/bin/
 /backend_netcore/ChildStudy/obj/
 /backend_netcore/.vs/
 /backend_netcore/.vs/
+/backend_netcore/ChildStudy/bin/
+!/backend_netcore/ChildStudy/bin/Release/netcoreapp3.1/publish/*
